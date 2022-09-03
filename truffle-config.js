@@ -34,7 +34,7 @@ module.exports = {
       },	
       network_id: '4',	
       gas: 9000000,	
-      gasPrice: 10000000000 //10 Gwei	
+      gasPrice: 5000000000 //5 Gwei	
     },	
     polygon: {	
       provider: function () {	
