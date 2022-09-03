@@ -1,12 +1,12 @@
 pragma solidity =0.5.16;
 
-import './DXswapFactory.sol';
-import './interfaces/IDXswapPair.sol';
-import './DXswapFeeSetter.sol';
-import './DXswapFeeReceiver.sol';
+import './MagicornSwapFactory.sol';
+import './interfaces/IMagicornSwapPair.sol';
+import './MagicornSwapFeeSetter.sol';
+import './MagicornSwapFeeReceiver.sol';
 
 
-contract DXswapDeployer {
+contract MagicornSwapDeployer {
     
     address payable public protocolFeeReceiver;
     address payable public dxdaoAvatar;
@@ -51,15 +51,15 @@ contract DXswapDeployer {
     
     // Step 2: Transfer ETH from the DXdao avatar to allow the deploy function to be called.
     function() external payable {
-        require(state == 0, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
-        require(msg.sender == dxdaoAvatar, 'DXswapDeployer: CALLER_NOT_FEE_TO_SETTER');
+        require(state == 0, 'MagicornSwapDeployer: WRONG_DEPLOYER_STATE');
+        require(msg.sender == dxdaoAvatar, 'MagicornSwapDeployer: CALLER_NOT_FEE_TO_SETTER');
         state = 1;
     }
     
-    // Step 3: Deploy DXswapFactory and all initial pairs
+    // Step 3: Deploy MagicornSwapFactory and all initial pairs
     function deploy() public {
-        require(state == 1, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
-        DXswapFactory dxSwapFactory = new DXswapFactory(address(this));
+        require(state == 1, 'MagicornSwapDeployer: WRONG_DEPLOYER_STATE');
+        MagicornSwapFactory dxSwapFactory = new MagicornSwapFactory(address(this));
         emit PairFactoryDeployed(address(dxSwapFactory));
         for(uint8 i = 0; i < initialTokenPairs.length; i ++) {
             address newPair = dxSwapFactory.createPair(initialTokenPairs[i].tokenA, initialTokenPairs[i].tokenB);
@@ -68,13 +68,13 @@ contract DXswapDeployer {
                 address(newPair)
             );
         }
-        DXswapFeeReceiver dxSwapFeeReceiver = new DXswapFeeReceiver(
+        MagicornSwapFeeReceiver dxSwapFeeReceiver = new MagicornSwapFeeReceiver(
             dxdaoAvatar, address(dxSwapFactory), WETH, protocolFeeReceiver, dxdaoAvatar
         );
         emit FeeReceiverDeployed(address(dxSwapFeeReceiver));
         dxSwapFactory.setFeeTo(address(dxSwapFeeReceiver));
         
-        DXswapFeeSetter dxSwapFeeSetter = new DXswapFeeSetter(dxdaoAvatar, address(dxSwapFactory));
+        MagicornSwapFeeSetter dxSwapFeeSetter = new MagicornSwapFeeSetter(dxdaoAvatar, address(dxSwapFactory));
         emit FeeSetterDeployed(address(dxSwapFeeSetter));
         dxSwapFactory.setFeeToSetter(address(dxSwapFeeSetter));
         state = 2;

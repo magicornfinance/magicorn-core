@@ -7,8 +7,8 @@ import { solidity, MockProvider, createFixtureLoader, deployContract } from 'eth
 import { getCreate2Address } from './shared/utilities'
 import { pairFixture } from './shared/fixtures'
 
-import DXswapPair from '../build/DXswapPair.json'
-import DXswapFeeSetter from '../build/DXswapFeeSetter.json'
+import MagicornSwapPair from '../build/MagicornSwapPair.json'
+import MagicornSwapFeeSetter from '../build/MagicornSwapFeeSetter.json'
 
 chai.use(solidity)
 
@@ -17,7 +17,7 @@ const TEST_ADDRESSES: [string, string] = [
   '0x2000000000000000000000000000000000000000'
 ]
 
-describe('DXswapFeeSetter', () => {
+describe('MagicornSwapFeeSetter', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
@@ -50,34 +50,34 @@ describe('DXswapFeeSetter', () => {
 
   it('setFeeTo', async () => {
     // Should not allow to setFeeTo from other address that is not owner calling feeSetter
-    await expect(feeSetter.connect(other).setFeeTo(other.address)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
+    await expect(feeSetter.connect(other).setFeeTo(other.address)).to.be.revertedWith('MagicornSwapFeeSetter: FORBIDDEN')
     await feeSetter.connect(dxdao).setFeeTo(dxdao.address)
 
-    // If feeToSetter changes it will will fail in DXswapFactory check when trying to setFeeTo from FeeSetter.
+    // If feeToSetter changes it will will fail in MagicornSwapFactory check when trying to setFeeTo from FeeSetter.
     await feeSetter.connect(dxdao).setFeeToSetter(other.address)
-    await expect(feeSetter.connect(dxdao).setFeeTo(dxdao.address)).to.be.revertedWith('DXswapFactory: FORBIDDEN')
+    await expect(feeSetter.connect(dxdao).setFeeTo(dxdao.address)).to.be.revertedWith('MagicornSwapFactory: FORBIDDEN')
   })
   
   it('setProtocolFee', async () => {
     // Should not allow to setProtocolFee from other address taht is not owner calling feeSetter
-    await expect(feeSetter.connect(other).setProtocolFee(5)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
+    await expect(feeSetter.connect(other).setProtocolFee(5)).to.be.revertedWith('MagicornSwapFeeSetter: FORBIDDEN')
     await feeSetter.connect(dxdao).setProtocolFee(5)
     expect(await factory.protocolFeeDenominator()).to.eq(5)
     
-    // If feeToSetter changes it will will fail in DXswapFactory check when trying to setProtocolFee from FeeSetter.
+    // If feeToSetter changes it will will fail in MagicornSwapFactory check when trying to setProtocolFee from FeeSetter.
     await feeSetter.connect(dxdao).setFeeToSetter(other.address)
-    await expect(feeSetter.connect(dxdao).setProtocolFee(5)).to.be.revertedWith('DXswapFactory: FORBIDDEN')
+    await expect(feeSetter.connect(dxdao).setProtocolFee(5)).to.be.revertedWith('MagicornSwapFactory: FORBIDDEN')
   })
   
   it('setSwapFee', async () => {
     // Should not allow to setSwapFee from other address taht is not owner calling feeSetter
-    await expect(feeSetter.connect(other).setSwapFee(pair.address, 5)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
+    await expect(feeSetter.connect(other).setSwapFee(pair.address, 5)).to.be.revertedWith('MagicornSwapFeeSetter: FORBIDDEN')
     await feeSetter.connect(dxdao).setSwapFee(pair.address, 5)
     expect(await pair.swapFee()).to.eq(5)
     
     // If ownership of the pair is given to other address both addresses (FeeSetter owner and Pair owner) should be
     // able to change the swap fee
-    await expect(feeSetter.connect(pairOwner).setSwapFee(pair.address, 5)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
+    await expect(feeSetter.connect(pairOwner).setSwapFee(pair.address, 5)).to.be.revertedWith('MagicornSwapFeeSetter: FORBIDDEN')
     await feeSetter.connect(dxdao).transferPairOwnership(pair.address, pairOwner.address)
     await feeSetter.connect(pairOwner).setSwapFee(pair.address, 3)
     expect(await pair.swapFee()).to.eq(3)
@@ -87,19 +87,19 @@ describe('DXswapFeeSetter', () => {
     // If ownership of the pair is removed by setting it to zero the pair owner should not be able to change the 
     // fee anymore.
     await feeSetter.connect(dxdao).transferPairOwnership(pair.address, AddressZero)
-    await expect(feeSetter.connect(pairOwner).setSwapFee(pair.address, 5)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
+    await expect(feeSetter.connect(pairOwner).setSwapFee(pair.address, 5)).to.be.revertedWith('MagicornSwapFeeSetter: FORBIDDEN')
 
-    // If feeToSetter changes it will will fail in DXswapFactory check when trying to setSwapFee from FeeSetter.
+    // If feeToSetter changes it will will fail in MagicornSwapFactory check when trying to setSwapFee from FeeSetter.
     await feeSetter.connect(dxdao).setFeeToSetter(other.address)
-    await expect(feeSetter.connect(dxdao).setSwapFee(pair.address, 5)).to.be.revertedWith('DXswapFactory: FORBIDDEN')
+    await expect(feeSetter.connect(dxdao).setSwapFee(pair.address, 5)).to.be.revertedWith('MagicornSwapFactory: FORBIDDEN')
   })
   
   it('setFeeToSetter', async () => {
     // Should not allow to setFeeToSetter from other address taht is not owner calling feeSetter
-    await expect(feeSetter.connect(other).setFeeToSetter(other.address)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
+    await expect(feeSetter.connect(other).setFeeToSetter(other.address)).to.be.revertedWith('MagicornSwapFeeSetter: FORBIDDEN')
     await feeSetter.connect(dxdao).setFeeToSetter(other.address)
     expect(await factory.feeToSetter()).to.eq(other.address)
-    // If feeToSetter changes it will will fail in DXswapFactory check when trying to setFeeToSetter from FeeSetter.
-    await expect(feeSetter.connect(dxdao).setFeeToSetter(dxdao.address)).to.be.revertedWith('DXswapFactory: FORBIDDEN')
+    // If feeToSetter changes it will will fail in MagicornSwapFactory check when trying to setFeeToSetter from FeeSetter.
+    await expect(feeSetter.connect(dxdao).setFeeToSetter(dxdao.address)).to.be.revertedWith('MagicornSwapFactory: FORBIDDEN')
   })
 })

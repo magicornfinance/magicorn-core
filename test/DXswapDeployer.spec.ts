@@ -8,13 +8,13 @@ import { factoryFixture } from './shared/fixtures'
 
 import ERC20 from '../build/ERC20.json'
 import WETH9 from '../build/WETH9.json'
-import DXswapDeployer from '../build/DXswapDeployer.json'
-import DXswapFactory from '../build/DXswapFactory.json'
-import DXswapPair from '../build/DXswapPair.json'
+import MagicornSwapDeployer from '../build/MagicornSwapDeployer.json'
+import MagicornSwapFactory from '../build/MagicornSwapFactory.json'
+import MagicornSwapPair from '../build/MagicornSwapPair.json'
 
 chai.use(solidity)
 
-describe('DXswapDeployer', () => {
+describe('MagicornSwapDeployer', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
@@ -29,7 +29,7 @@ describe('DXswapDeployer', () => {
   let token0: Contract
   let token1: Contract
   let token2: Contract
-  const pairBytecode = "0x"+DXswapPair.bytecode
+  const pairBytecode = "0x"+MagicornSwapPair.bytecode
   
   it('Execute migration with intial pairs', async () => {
     
@@ -38,9 +38,9 @@ describe('DXswapDeployer', () => {
     token1 = await deployContract(tokenOwner, ERC20, [expandTo18Decimals(20000)], overrides)
     token2 = await deployContract(tokenOwner, ERC20, [expandTo18Decimals(20000)], overrides)
     const weth = await deployContract(tokenOwner, WETH9)
-    // Deploy DXswapDeployer
+    // Deploy MagicornSwapDeployer
     dxSwapDeployer = await deployContract(
-      dxdao, DXswapDeployer, [
+      dxdao, MagicornSwapDeployer, [
         protocolFeeReceiver.address,
         dxdao.address,
         weth.address,
@@ -53,11 +53,11 @@ describe('DXswapDeployer', () => {
     
     // Dont allow other address to approve deployment by sending eth
     await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
-      .to.be.revertedWith('DXswapDeployer: CALLER_NOT_FEE_TO_SETTER')
+      .to.be.revertedWith('MagicornSwapDeployer: CALLER_NOT_FEE_TO_SETTER')
     
     // Dont allow deploy before being approved by sending ETH
     await expect(dxSwapDeployer.connect(other).deploy())
-      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+      .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
 
     // Send transaction with value from dxdao to approve deployment
     await dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)})
@@ -65,9 +65,9 @@ describe('DXswapDeployer', () => {
     
     // Dont allow sending more value
     await expect(dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
-      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+      .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
     await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
-      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+      .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
 
     // Execute deployment transaction
     const deployTx = await dxSwapDeployer.connect(other).deploy()
@@ -76,12 +76,12 @@ describe('DXswapDeployer', () => {
     
     // Dont allow sending more value
     await expect(dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
-      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+      .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
     await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
-      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+      .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
     
     // Dont allow running deployment again
-    await expect(dxSwapDeployer.connect(other).deploy()).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(dxSwapDeployer.connect(other).deploy()).to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
     
     // Get addresses from events
     const pairFactoryAddress = deployTxReceipt.logs != undefined 
@@ -104,20 +104,20 @@ describe('DXswapDeployer', () => {
       : null
     
     // Instantiate contracts
-    const pairFactory = new Contract(pairFactoryAddress, JSON.stringify(DXswapFactory.abi), provider);
+    const pairFactory = new Contract(pairFactoryAddress, JSON.stringify(MagicornSwapFactory.abi), provider);
     const pair01 = new Contract(
       getCreate2Address(pairFactory.address, [token0.address, token1.address], pairBytecode), 
-      JSON.stringify(DXswapPair.abi),
+      JSON.stringify(MagicornSwapPair.abi),
       provider
     );
     const pair02 = new Contract(
       getCreate2Address(pairFactory.address, [token0.address, token2.address], pairBytecode), 
-      JSON.stringify(DXswapPair.abi),
+      JSON.stringify(MagicornSwapPair.abi),
       provider
     );
     const pair12 = new Contract(
       getCreate2Address(pairFactory.address, [token1.address, token2.address], pairBytecode), 
-      JSON.stringify(DXswapPair.abi),
+      JSON.stringify(MagicornSwapPair.abi),
       provider
     );
     

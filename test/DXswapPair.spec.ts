@@ -17,7 +17,7 @@ const overrides = {
   gasLimit: 9999999
 }
 
-describe('DXswapPair', () => {
+describe('MagicornSwapPair', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
@@ -94,7 +94,7 @@ describe('DXswapPair', () => {
       const denominator = token0Amount.mul(FEE_DENOMINATOR).add(amountInWithFee);
       const amountOut = numerator.div(denominator);
       await expect(pair.swap(0, amountOut.add(1), wallet.address, '0x', overrides)).to.be.revertedWith(
-        'DXswapPair: K'
+        'MagicornSwapPair: K'
       )
       await pair.swap(0, amountOut, wallet.address, '0x', overrides)
     })
@@ -112,7 +112,7 @@ describe('DXswapPair', () => {
       await addLiquidity(token0Amount, token1Amount)
       await token0.transfer(pair.address, inputAmount)
       await expect(pair.swap(outputAmount.add(1), 0, wallet.address, '0x', overrides)).to.be.revertedWith(
-        'DXswapPair: K'
+        'MagicornSwapPair: K'
       )
       await pair.swap(outputAmount.sub(1), 0, wallet.address, '0x', overrides)
     })
@@ -282,11 +282,11 @@ describe('DXswapPair', () => {
     // Attack pool
     await token1.transfer(pair.address, expandTo18Decimals(1))
     await expect(pair.connect(wallet).swap(expandTo18Decimals(999), 0, wallet.address, '0x', overrides)).to.be.revertedWith(
-      'DXswapPair: K'
+      'MagicornSwapPair: K'
     )
     await token0.transfer(pair.address, expandTo18Decimals(1))
     await expect(pair.connect(wallet).swap(0, expandTo18Decimals(999), wallet.address, '0x', overrides)).to.be.revertedWith(
-      'DXswapPair: K'
+      'MagicornSwapPair: K'
     )
 
     expect(await token0.balanceOf(pair.address)).to.eq(expandTo18Decimals(1001))
@@ -391,7 +391,7 @@ describe('DXswapPair', () => {
     await feeSetter.setSwapFee(pair.address, 0)
     await feeSetter.setSwapFee(pair.address, 1000)
     await expect(feeSetter.setSwapFee(pair.address, 1001)).to.be.revertedWith(
-      'DXswapPair: FORBIDDEN_FEE'
+      'MagicornSwapPair: FORBIDDEN_FEE'
     )
   })
 })

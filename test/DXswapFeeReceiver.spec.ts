@@ -7,9 +7,9 @@ import { solidity, MockProvider, createFixtureLoader, deployContract } from 'eth
 import { expandTo18Decimals, getCreate2Address } from './shared/utilities'
 import { pairFixture } from './shared/fixtures'
 
-import DXswapPair from '../build/DXswapPair.json'
+import MagicornSwapPair from '../build/MagicornSwapPair.json'
 import ERC20 from '../build/ERC20.json'
-import DXswapFeeReceiver from '../build/DXswapFeeReceiver.json'
+import MagicornSwapFeeReceiver from '../build/MagicornSwapFeeReceiver.json'
 
 const FEE_DENOMINATOR = bigNumberify(10).pow(4)
 const ROUND_EXCEPTION = bigNumberify(10).pow(4)
@@ -21,7 +21,7 @@ const TEST_ADDRESSES: [string, string] = [
   '0x2000000000000000000000000000000000000000'
 ]
 
-describe('DXswapFeeReceiver', () => {
+describe('MagicornSwapFeeReceiver', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
@@ -237,7 +237,7 @@ describe('DXswapFeeReceiver', () => {
       await factory.getPair(
         (tokenA.address < tokenB.address) ? tokenA.address : tokenB.address,
         (tokenA.address < tokenB.address) ? tokenB.address : tokenA.address
-      ), JSON.stringify(DXswapPair.abi), provider
+      ), JSON.stringify(MagicornSwapPair.abi), provider
     ).connect(wallet)
 
     await tokenA.transfer(tokenATokenBPair.address, tokenAmount)
@@ -309,7 +309,7 @@ describe('DXswapFeeReceiver', () => {
       await factory.getPair(
         (tokenA.address < tokenB.address) ? tokenA.address : tokenB.address,
         (tokenA.address < tokenB.address) ? tokenB.address : tokenA.address
-      ), JSON.stringify(DXswapPair.abi), provider
+      ), JSON.stringify(MagicornSwapPair.abi), provider
     ).connect(wallet)
 
     await tokenA.transfer(tokenATokenBPair.address, tokenAmount)
@@ -351,7 +351,7 @@ describe('DXswapFeeReceiver', () => {
       await factory.getPair(
         (tokenC.address < tokenD.address) ? tokenC.address : tokenD.address,
         (tokenC.address < tokenD.address) ? tokenD.address : tokenC.address
-      ), JSON.stringify(DXswapPair.abi), provider
+      ), JSON.stringify(MagicornSwapPair.abi), provider
     ).connect(wallet)
 
     await tokenC.transfer(tokenCTokenDPair.address, tokenAmount)
@@ -424,7 +424,7 @@ describe('DXswapFeeReceiver', () => {
     async () =>
   {
     await expect(feeReceiver.connect(other).transferOwnership(other.address))
-      .to.be.revertedWith('DXswapFeeReceiver: FORBIDDEN')
+      .to.be.revertedWith('MagicornSwapFeeReceiver: FORBIDDEN')
     await feeReceiver.connect(dxdao).transferOwnership(other.address);
     expect(await feeReceiver.owner()).to.be.eq(other.address)
   })
@@ -434,7 +434,7 @@ describe('DXswapFeeReceiver', () => {
     async () =>
   {
     await expect(feeReceiver.connect(other).changeReceivers(other.address, other.address))
-      .to.be.revertedWith('DXswapFeeReceiver: FORBIDDEN')
+      .to.be.revertedWith('MagicornSwapFeeReceiver: FORBIDDEN')
     await feeReceiver.connect(dxdao).changeReceivers(other.address, other.address);
     expect(await feeReceiver.ethReceiver()).to.be.eq(other.address)
     expect(await feeReceiver.fallbackReceiver()).to.be.eq(other.address)
@@ -472,7 +472,7 @@ describe('DXswapFeeReceiver', () => {
   
     const protocolFeeReceiverBalance = await provider.getBalance(protocolFeeReceiver.address)
 
-    await expect(feeReceiver.connect(wallet).takeProtocolFee([pair.address], overrides)).to.be.revertedWith('DXswapFeeReceiver: INSUFFICIENT_LIQUIDITY')
+    await expect(feeReceiver.connect(wallet).takeProtocolFee([pair.address], overrides)).to.be.revertedWith('MagicornSwapFeeReceiver: INSUFFICIENT_LIQUIDITY')
 
     expect(await pair.balanceOf(feeReceiver.address)).to.eq(protocolFeeLPToknesReceived)
     expect(await token0.balanceOf(feeReceiver.address)).to.eq(0)

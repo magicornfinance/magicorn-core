@@ -1,12 +1,12 @@
 pragma solidity =0.5.16;
 
-import './interfaces/IDXswapERC20.sol';
+import './interfaces/IMagicornSwapERC20.sol';
 import './libraries/SafeMath.sol';
 
-contract DXswapERC20 is IDXswapERC20 {
+contract MagicornSwapERC20 is IMagicornSwapERC20 {
     using SafeMath for uint;
 
-    string public constant name = 'DXswap';
+    string public constant name = 'MagicornSwap';
     string public constant symbol = 'DXS';
     uint8 public constant decimals = 18;
     uint  public totalSupply;
@@ -79,7 +79,7 @@ contract DXswapERC20 is IDXswapERC20 {
     }
 
     function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
-        require(deadline >= block.timestamp, 'DXswapERC20: EXPIRED');
+        require(deadline >= block.timestamp, 'MagicornSwapERC20: EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
@@ -88,7 +88,7 @@ contract DXswapERC20 is IDXswapERC20 {
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress != address(0) && recoveredAddress == owner, 'DXswapERC20: INVALID_SIGNATURE');
+        require(recoveredAddress != address(0) && recoveredAddress == owner, 'MagicornSwapERC20: INVALID_SIGNATURE');
         _approve(owner, spender, value);
     }
 }

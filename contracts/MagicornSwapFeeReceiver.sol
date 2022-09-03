@@ -1,17 +1,17 @@
 pragma solidity =0.5.16;
 
-import './interfaces/IDXswapFactory.sol';
-import './interfaces/IDXswapPair.sol';
+import './interfaces/IMagicornSwapFactory.sol';
+import './interfaces/IMagicornSwapPair.sol';
 import './interfaces/IWETH.sol';
 import './libraries/TransferHelper.sol';
 import './libraries/SafeMath.sol';
 
 
-contract DXswapFeeReceiver {
+contract MagicornSwapFeeReceiver {
     using SafeMath for uint;
 
     address public owner;
-    IDXswapFactory public factory;
+    IMagicornSwapFactory public factory;
     address public WETH;
     address public ethReceiver;
     address public fallbackReceiver;
@@ -20,32 +20,32 @@ contract DXswapFeeReceiver {
         address _owner, address _factory, address _WETH, address _ethReceiver, address _fallbackReceiver
     ) public {
         owner = _owner;
-        factory = IDXswapFactory(_factory);
+        factory = IMagicornSwapFactory(_factory);
         WETH = _WETH;
         ethReceiver = _ethReceiver;
         fallbackReceiver = _fallbackReceiver;
     }
-    
+
     function() external payable {}
 
     function transferOwnership(address newOwner) external {
-        require(msg.sender == owner, 'DXswapFeeReceiver: FORBIDDEN');
+        require(msg.sender == owner, 'MagicornSwapFeeReceiver: FORBIDDEN');
         owner = newOwner;
     }
-    
+
     function changeReceivers(address _ethReceiver, address _fallbackReceiver) external {
-        require(msg.sender == owner, 'DXswapFeeReceiver: FORBIDDEN');
+        require(msg.sender == owner, 'MagicornSwapFeeReceiver: FORBIDDEN');
         ethReceiver = _ethReceiver;
         fallbackReceiver = _fallbackReceiver;
     }
-    
+
     // Returns sorted token addresses, used to handle return values from pairs sorted in this order
     function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
-        require(tokenA != tokenB, 'DXswapFeeReceiver: IDENTICAL_ADDRESSES');
+        require(tokenA != tokenB, 'MagicornSwapFeeReceiver: IDENTICAL_ADDRESSES');
         (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'DXswapFeeReceiver: ZERO_ADDRESS');
+        require(token0 != address(0), 'MagicornSwapFeeReceiver: ZERO_ADDRESS');
     }
-    
+
     // Helper function to know if an address is a contract, extcodesize returns the size of the code of a smart
     //  contract in a specific address
     function isContract(address addr) internal returns (bool) {
@@ -55,7 +55,7 @@ contract DXswapFeeReceiver {
     }
 
     // Calculates the CREATE2 address for a pair without making any external calls
-    // Taken from DXswapLibrary, removed the factory parameter
+    // Taken from MagicornSwapLibrary, removed the factory parameter
     function pairFor(address tokenA, address tokenB) internal view returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
         pair = address(uint(keccak256(abi.encodePacked(
@@ -65,32 +65,32 @@ contract DXswapFeeReceiver {
             hex'd306a548755b9295ee49cc729e13ca4a45e00199bbd890fa146da43a50571776' // init code hash
         ))));
     }
-    
-    // Done with code form DXswapRouter and DXswapLibrary, removed the deadline argument
+
+    // Done with code form MagicornSwapRouter and MagicornSwapLibrary, removed the deadline argument
     function _swapTokensForETH(uint amountIn, address fromToken)
         internal
     {
-        IDXswapPair pairToUse = IDXswapPair(pairFor(fromToken, WETH));
-        
+        IMagicornSwapPair pairToUse = IMagicornSwapPair(pairFor(fromToken, WETH));
+
         (uint reserve0, uint reserve1,) = pairToUse.getReserves();
         (uint reserveIn, uint reserveOut) = fromToken < WETH ? (reserve0, reserve1) : (reserve1, reserve0);
 
-        require(reserveIn > 0 && reserveOut > 0, 'DXswapFeeReceiver: INSUFFICIENT_LIQUIDITY');
+        require(reserveIn > 0 && reserveOut > 0, 'MagicornSwapFeeReceiver: INSUFFICIENT_LIQUIDITY');
         uint amountInWithFee = amountIn.mul(uint(10000).sub(pairToUse.swapFee()));
         uint numerator = amountInWithFee.mul(reserveOut);
         uint denominator = reserveIn.mul(10000).add(amountInWithFee);
         uint amountOut = numerator / denominator;
-        
+
         TransferHelper.safeTransfer(
             fromToken, address(pairToUse), amountIn
         );
-        
+
         (uint amount0Out, uint amount1Out) = fromToken < WETH ? (uint(0), amountOut) : (amountOut, uint(0));
-        
+
         pairToUse.swap(
             amount0Out, amount1Out, address(this), new bytes(0)
         );
-        
+
         IWETH(WETH).withdraw(amountOut);
         TransferHelper.safeTransferETH(ethReceiver, amountOut);
     }
@@ -109,11 +109,11 @@ contract DXswapFeeReceiver {
         TransferHelper.safeTransfer(token, fallbackReceiver, amount);
       }
     }
-    
-    // Take what was charged as protocol fee from the DXswap pair liquidity
-    function takeProtocolFee(IDXswapPair[] calldata pairs) external {
-        require(msg.sender == owner, 'DXswapFeeReceiver: FORBIDDEN');
-        
+
+    // Take what was charged as protocol fee from the MagicornSwap pair liquidity
+    function takeProtocolFee(IMagicornSwapPair[] calldata pairs) external {
+        require(msg.sender == owner, 'MagicornSwapFeeReceiver: FORBIDDEN');
+
         for (uint i = 0; i < pairs.length; i++) {
             address token0 = pairs[i].token0();
             address token1 = pairs[i].token1();

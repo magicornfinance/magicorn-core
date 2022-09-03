@@ -7,11 +7,11 @@ import { expandTo18Decimals } from './utilities'
 
 import ERC20 from '../../build/ERC20.json'
 import WETH9 from '../../build/WETH9.json'
-import DXswapFactory from '../../build/DXswapFactory.json'
-import DXswapPair from '../../build/DXswapPair.json'
-import DXswapDeployer from '../../build/DXswapDeployer.json'
-import DXswapFeeSetter from '../../build/DXswapFeeSetter.json'
-import DXswapFeeReceiver from '../../build/DXswapFeeReceiver.json'
+import MagicornSwapFactory from '../../build/MagicornSwapFactory.json'
+import MagicornSwapPair from '../../build/MagicornSwapPair.json'
+import MagicornSwapDeployer from '../../build/MagicornSwapDeployer.json'
+import MagicornSwapFeeSetter from '../../build/MagicornSwapFeeSetter.json'
+import MagicornSwapFeeReceiver from '../../build/MagicornSwapFeeReceiver.json'
 
 interface FactoryFixture {
   factory: Contract
@@ -27,7 +27,7 @@ const overrides = {
 export async function factoryFixture(provider: Web3Provider, [dxdao, ethReceiver]: Wallet[]): Promise<FactoryFixture> {
   const WETH = await deployContract(dxdao, WETH9)
   const dxSwapDeployer = await deployContract(
-    dxdao, DXswapDeployer, [ ethReceiver.address, dxdao.address, WETH.address, [], [], [], ], overrides
+    dxdao, MagicornSwapDeployer, [ ethReceiver.address, dxdao.address, WETH.address, [], [], [], ], overrides
   )
   await dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: 1})
   const deployTx = await dxSwapDeployer.deploy()
@@ -35,11 +35,11 @@ export async function factoryFixture(provider: Web3Provider, [dxdao, ethReceiver
   const factoryAddress = deployTxReceipt.logs !== undefined
     ? defaultAbiCoder.decode(['address'], deployTxReceipt.logs[0].data)[0]
     : null
-  const factory = new Contract(factoryAddress, JSON.stringify(DXswapFactory.abi), provider).connect(dxdao)
+  const factory = new Contract(factoryAddress, JSON.stringify(MagicornSwapFactory.abi), provider).connect(dxdao)
   const feeSetterAddress = await factory.feeToSetter()
-  const feeSetter = new Contract(feeSetterAddress, JSON.stringify(DXswapFeeSetter.abi), provider).connect(dxdao)
+  const feeSetter = new Contract(feeSetterAddress, JSON.stringify(MagicornSwapFeeSetter.abi), provider).connect(dxdao)
   const feeReceiverAddress = await factory.feeTo()
-  const feeReceiver = new Contract(feeReceiverAddress, JSON.stringify(DXswapFeeReceiver.abi), provider).connect(dxdao)
+  const feeReceiver = new Contract(feeReceiverAddress, JSON.stringify(MagicornSwapFeeReceiver.abi), provider).connect(dxdao)
   return { factory, feeSetter, feeReceiver, WETH }
 }
 
@@ -59,7 +59,7 @@ export async function pairFixture(provider: Web3Provider, [dxdao, wallet, ethRec
   const token1 = token0.address === tokenA.address ? tokenB : tokenA
   
   const dxSwapDeployer = await deployContract(
-    dxdao, DXswapDeployer, [
+    dxdao, MagicornSwapDeployer, [
       ethReceiver.address,
       dxdao.address,
       WETH.address,
@@ -75,18 +75,18 @@ export async function pairFixture(provider: Web3Provider, [dxdao, wallet, ethRec
     ? defaultAbiCoder.decode(['address'], deployTxReceipt.logs[0].data)[0]
     : null
   
-  const factory = new Contract(factoryAddress, JSON.stringify(DXswapFactory.abi), provider).connect(dxdao)
+  const factory = new Contract(factoryAddress, JSON.stringify(MagicornSwapFactory.abi), provider).connect(dxdao)
   const feeSetterAddress = await factory.feeToSetter()
-  const feeSetter = new Contract(feeSetterAddress, JSON.stringify(DXswapFeeSetter.abi), provider).connect(dxdao)
+  const feeSetter = new Contract(feeSetterAddress, JSON.stringify(MagicornSwapFeeSetter.abi), provider).connect(dxdao)
   const feeReceiverAddress = await factory.feeTo()
-  const feeReceiver = new Contract(feeReceiverAddress, JSON.stringify(DXswapFeeReceiver.abi), provider).connect(dxdao)
+  const feeReceiver = new Contract(feeReceiverAddress, JSON.stringify(MagicornSwapFeeReceiver.abi), provider).connect(dxdao)
   const pair = new Contract(
      await factory.getPair(token0.address, token1.address),
-     JSON.stringify(DXswapPair.abi), provider
+     JSON.stringify(MagicornSwapPair.abi), provider
    ).connect(dxdao)
   const wethPair = new Contract(
      await factory.getPair(token1.address, WETH.address),
-     JSON.stringify(DXswapPair.abi), provider
+     JSON.stringify(MagicornSwapPair.abi), provider
    ).connect(dxdao)
 
   return { factory, feeSetter, feeReceiver, WETH, token0, token1, pair, wethPair }

@@ -1,6 +1,6 @@
-npx truffle-flattener contracts/DXswapFactory.sol > contracts/.flattened/DXswapFactory.sol
-npx truffle-flattener contracts/DXswapPair.sol > contracts/.flattened/DXswapPair.sol
-npx truffle-flattener contracts/DXswapERC20.sol > contracts/.flattened/DXswapERC20.sol
-npx truffle-flattener contracts/DXswapDeployer.sol > contracts/.flattened/DXswapDeployer.sol
-npx truffle-flattener contracts/DXswapFeeSetter.sol > contracts/.flattened/DXswapFeeSetter.sol
-npx truffle-flattener contracts/DXswapFeeReceiver.sol > contracts/.flattened/DXswapFeeReceiver.sol
+npx truffle-flattener contracts/MagicornSwapFactory.sol > contracts/.flattened/MagicornSwapFactory.sol
+npx truffle-flattener contracts/MagicornSwapPair.sol > contracts/.flattened/MagicornSwapPair.sol
+npx truffle-flattener contracts/MagicornSwapERC20.sol > contracts/.flattened/MagicornSwapERC20.sol
+npx truffle-flattener contracts/MagicornSwapDeployer.sol > contracts/.flattened/MagicornSwapDeployer.sol
+npx truffle-flattener contracts/MagicornSwapFeeSetter.sol > contracts/.flattened/MagicornSwapFeeSetter.sol
+npx truffle-flattener contracts/MagicornSwapFeeReceiver.sol > contracts/.flattened/MagicornSwapFeeReceiver.sol
