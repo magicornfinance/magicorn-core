@@ -9,7 +9,7 @@ import './MagicornSwapFeeReceiver.sol';
 contract MagicornSwapDeployer {
     
     address payable public protocolFeeReceiver;
-    address payable public dxdaoAvatar;
+    address payable public magicorndaoAvatar;
     address public WETH;
     uint8 public state = 0;
 
@@ -29,13 +29,13 @@ contract MagicornSwapDeployer {
     // Step 1: Create the deployer contract with all the needed information for deployment.
     constructor(
         address payable _protocolFeeReceiver,
-        address payable _dxdaoAvatar,
+        address payable _magicorndaoAvatar,
         address _WETH,
         address[] memory tokensA,
         address[] memory tokensB,
         uint32[] memory swapFees
     ) public {
-        dxdaoAvatar = _dxdaoAvatar;
+        magicorndaoAvatar = _magicorndaoAvatar;
         WETH = _WETH;
         protocolFeeReceiver = _protocolFeeReceiver;
         for(uint8 i = 0; i < tokensA.length; i ++) {
@@ -52,31 +52,31 @@ contract MagicornSwapDeployer {
     // Step 2: Transfer ETH from the DXdao avatar to allow the deploy function to be called.
     function() external payable {
         require(state == 0, 'MagicornSwapDeployer: WRONG_DEPLOYER_STATE');
-        require(msg.sender == dxdaoAvatar, 'MagicornSwapDeployer: CALLER_NOT_FEE_TO_SETTER');
+        require(msg.sender == magicorndaoAvatar, 'MagicornSwapDeployer: CALLER_NOT_FEE_TO_SETTER');
         state = 1;
     }
     
     // Step 3: Deploy MagicornSwapFactory and all initial pairs
     function deploy() public {
         require(state == 1, 'MagicornSwapDeployer: WRONG_DEPLOYER_STATE');
-        MagicornSwapFactory dxSwapFactory = new MagicornSwapFactory(address(this));
-        emit PairFactoryDeployed(address(dxSwapFactory));
+        MagicornSwapFactory magicornSwapFactory = new MagicornSwapFactory(address(this));
+        emit PairFactoryDeployed(address(magicornSwapFactory));
         for(uint8 i = 0; i < initialTokenPairs.length; i ++) {
-            address newPair = dxSwapFactory.createPair(initialTokenPairs[i].tokenA, initialTokenPairs[i].tokenB);
-            dxSwapFactory.setSwapFee(newPair, initialTokenPairs[i].swapFee);
+            address newPair = magicornSwapFactory.createPair(initialTokenPairs[i].tokenA, initialTokenPairs[i].tokenB);
+            magicornSwapFactory.setSwapFee(newPair, initialTokenPairs[i].swapFee);
             emit PairDeployed(
                 address(newPair)
             );
         }
-        MagicornSwapFeeReceiver dxSwapFeeReceiver = new MagicornSwapFeeReceiver(
-            dxdaoAvatar, address(dxSwapFactory), WETH, protocolFeeReceiver, dxdaoAvatar
+        MagicornSwapFeeReceiver magicornSwapFeeReceiver = new MagicornSwapFeeReceiver(
+            magicorndaoAvatar, address(magicornSwapFactory), WETH, protocolFeeReceiver, magicorndaoAvatar
         );
-        emit FeeReceiverDeployed(address(dxSwapFeeReceiver));
-        dxSwapFactory.setFeeTo(address(dxSwapFeeReceiver));
+        emit FeeReceiverDeployed(address(magicornSwapFeeReceiver));
+        magicornSwapFactory.setFeeTo(address(magicornSwapFeeReceiver));
         
-        MagicornSwapFeeSetter dxSwapFeeSetter = new MagicornSwapFeeSetter(dxdaoAvatar, address(dxSwapFactory));
-        emit FeeSetterDeployed(address(dxSwapFeeSetter));
-        dxSwapFactory.setFeeToSetter(address(dxSwapFeeSetter));
+        MagicornSwapFeeSetter magicornSwapFeeSetter = new MagicornSwapFeeSetter(magicorndaoAvatar, address(magicornSwapFactory));
+        emit FeeSetterDeployed(address(magicornSwapFeeSetter));
+        magicornSwapFactory.setFeeToSetter(address(magicornSwapFeeSetter));
         state = 2;
         msg.sender.transfer(address(this).balance);
     }

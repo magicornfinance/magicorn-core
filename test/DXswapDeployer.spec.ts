@@ -20,12 +20,12 @@ describe('MagicornSwapDeployer', () => {
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
     gasLimit: 12000000
   })
-  const [dxdao, tokenOwner, protocolFeeReceiver, other] = provider.getWallets()
+  const [magicorndao, tokenOwner, protocolFeeReceiver, other] = provider.getWallets()
   const overrides = {
     gasLimit: 12000000
   }
 
-  let dxSwapDeployer: Contract
+  let magicornSwapDeployer: Contract
   let token0: Contract
   let token1: Contract
   let token2: Contract
@@ -39,49 +39,49 @@ describe('MagicornSwapDeployer', () => {
     token2 = await deployContract(tokenOwner, ERC20, [expandTo18Decimals(20000)], overrides)
     const weth = await deployContract(tokenOwner, WETH9)
     // Deploy MagicornSwapDeployer
-    dxSwapDeployer = await deployContract(
-      dxdao, MagicornSwapDeployer, [
+    magicornSwapDeployer = await deployContract(
+      magicorndao, MagicornSwapDeployer, [
         protocolFeeReceiver.address,
-        dxdao.address,
+        magicorndao.address,
         weth.address,
         [token0.address, token0.address, token1.address],
         [token1.address, token2.address, token2.address],
         [10, 20, 30],
       ], overrides
     )
-    expect(await dxSwapDeployer.state()).to.eq(0)
+    expect(await magicornSwapDeployer.state()).to.eq(0)
     
     // Dont allow other address to approve deployment by sending eth
-    await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+    await expect(other.sendTransaction({to: magicornSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
       .to.be.revertedWith('MagicornSwapDeployer: CALLER_NOT_FEE_TO_SETTER')
     
     // Dont allow deploy before being approved by sending ETH
-    await expect(dxSwapDeployer.connect(other).deploy())
+    await expect(magicornSwapDeployer.connect(other).deploy())
       .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
 
-    // Send transaction with value from dxdao to approve deployment
-    await dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)})
-    expect(await dxSwapDeployer.state()).to.eq(1)
+    // Send transaction with value from magicorndao to approve deployment
+    await magicorndao.sendTransaction({to: magicornSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)})
+    expect(await magicornSwapDeployer.state()).to.eq(1)
     
     // Dont allow sending more value
-    await expect(dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+    await expect(magicorndao.sendTransaction({to: magicornSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
       .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
-    await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+    await expect(other.sendTransaction({to: magicornSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
       .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
 
     // Execute deployment transaction
-    const deployTx = await dxSwapDeployer.connect(other).deploy()
-    expect(await dxSwapDeployer.state()).to.eq(2)
+    const deployTx = await magicornSwapDeployer.connect(other).deploy()
+    expect(await magicornSwapDeployer.state()).to.eq(2)
     const deployTxReceipt = await provider.getTransactionReceipt(deployTx.hash);
     
     // Dont allow sending more value
-    await expect(dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+    await expect(magicorndao.sendTransaction({to: magicornSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
       .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
-    await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+    await expect(other.sendTransaction({to: magicornSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
       .to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
     
     // Dont allow running deployment again
-    await expect(dxSwapDeployer.connect(other).deploy()).to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(magicornSwapDeployer.connect(other).deploy()).to.be.revertedWith('MagicornSwapDeployer: WRONG_DEPLOYER_STATE')
     
     // Get addresses from events
     const pairFactoryAddress = deployTxReceipt.logs != undefined 

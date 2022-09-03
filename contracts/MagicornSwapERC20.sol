@@ -6,8 +6,8 @@ import './libraries/SafeMath.sol';
 contract MagicornSwapERC20 is IMagicornSwapERC20 {
     using SafeMath for uint;
 
-    string public constant name = 'MagicornSwap';
-    string public constant symbol = 'DXS';
+    string public constant name = 'Magicorn LP';
+    string public constant symbol = 'MAGIC-LP';
     uint8 public constant decimals = 18;
     uint  public totalSupply;
     mapping(address => uint) public balanceOf;

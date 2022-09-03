@@ -30,8 +30,8 @@ describe('MagicornSwapFeeReceiver', () => {
   const overrides = {
     gasLimit: 9999999
   }
-  const [dxdao, wallet, protocolFeeReceiver, other] = provider.getWallets()
-  const loadFixture = createFixtureLoader(provider, [dxdao, wallet, protocolFeeReceiver])
+  const [magicorndao, wallet, protocolFeeReceiver, other] = provider.getWallets()
+  const loadFixture = createFixtureLoader(provider, [magicorndao, wallet, protocolFeeReceiver])
   
   async function getAmountOut(pair: Contract, tokenIn: string, amountIn: BigNumber) {
     const [ reserve0, reserve1 ] = await pair.getReserves()
@@ -152,7 +152,7 @@ describe('MagicornSwapFeeReceiver', () => {
     
     expect((await provider.getBalance(protocolFeeReceiver.address)))
     .to.be.eq(protocolFeeReceiverBalanceBeforeTake.add(wethFromToken1FromProtocolFee))
-    expect((await token0.balanceOf(dxdao.address)))
+    expect((await token0.balanceOf(magicorndao.address)))
       .to.be.eq(token0FromProtocolFee)
   })
 
@@ -217,7 +217,7 @@ describe('MagicornSwapFeeReceiver', () => {
     expect(await WETH.balanceOf(feeReceiver.address)).to.eq(0)
     expect(await wethPair.balanceOf(feeReceiver.address)).to.eq(0)
     expect(await provider.getBalance(feeReceiver.address)).to.eq(0)
-    expect(await token1.balanceOf(dxdao.address)).to.be.eq(0)
+    expect(await token1.balanceOf(magicorndao.address)).to.be.eq(0)
     expect((await provider.getBalance(protocolFeeReceiver.address)))
       .to.be.eq(protocolFeeReceiverBalanceBeforeTake.add(wethFromToken1FromProtocolFee).add(wethFromProtocolFee))
   })
@@ -287,9 +287,9 @@ describe('MagicornSwapFeeReceiver', () => {
     
     expect((await provider.getBalance(protocolFeeReceiver.address)))
       .to.be.eq(protocolFeeReceiverBalance)
-    expect((await tokenA.balanceOf(dxdao.address)))
+    expect((await tokenA.balanceOf(magicorndao.address)))
       .to.be.eq(tokenAFromProtocolFee)
-    expect((await tokenB.balanceOf(dxdao.address)))
+    expect((await tokenB.balanceOf(magicorndao.address)))
       .to.be.eq(tokenBFromProtocolFee)
   })
   
@@ -409,13 +409,13 @@ describe('MagicornSwapFeeReceiver', () => {
     
     expect((await provider.getBalance(protocolFeeReceiver.address)))
     .to.be.eq(protocolFeeReceiverBalance)
-    expect((await tokenA.balanceOf(dxdao.address)))
+    expect((await tokenA.balanceOf(magicorndao.address)))
       .to.be.eq(tokenAFromProtocolFee)
-    expect((await tokenB.balanceOf(dxdao.address)))
+    expect((await tokenB.balanceOf(magicorndao.address)))
       .to.be.eq(tokenBFromProtocolFee)
-    expect((await tokenC.balanceOf(dxdao.address)))
+    expect((await tokenC.balanceOf(magicorndao.address)))
       .to.be.eq(tokenCFromProtocolFee)
-    expect((await tokenD.balanceOf(dxdao.address)))
+    expect((await tokenD.balanceOf(magicorndao.address)))
       .to.be.eq(tokenDFromProtocolFee)
   })
 
@@ -425,7 +425,7 @@ describe('MagicornSwapFeeReceiver', () => {
   {
     await expect(feeReceiver.connect(other).transferOwnership(other.address))
       .to.be.revertedWith('MagicornSwapFeeReceiver: FORBIDDEN')
-    await feeReceiver.connect(dxdao).transferOwnership(other.address);
+    await feeReceiver.connect(magicorndao).transferOwnership(other.address);
     expect(await feeReceiver.owner()).to.be.eq(other.address)
   })
 
@@ -435,7 +435,7 @@ describe('MagicornSwapFeeReceiver', () => {
   {
     await expect(feeReceiver.connect(other).changeReceivers(other.address, other.address))
       .to.be.revertedWith('MagicornSwapFeeReceiver: FORBIDDEN')
-    await feeReceiver.connect(dxdao).changeReceivers(other.address, other.address);
+    await feeReceiver.connect(magicorndao).changeReceivers(other.address, other.address);
     expect(await feeReceiver.ethReceiver()).to.be.eq(other.address)
     expect(await feeReceiver.fallbackReceiver()).to.be.eq(other.address)
   })
@@ -482,9 +482,9 @@ describe('MagicornSwapFeeReceiver', () => {
     
     expect((await provider.getBalance(protocolFeeReceiver.address)))
       .to.be.eq(protocolFeeReceiverBalance)
-    expect((await token0.balanceOf(dxdao.address)))
+    expect((await token0.balanceOf(magicorndao.address)))
       .to.be.eq(0)
-    expect((await token1.balanceOf(dxdao.address)))
+    expect((await token1.balanceOf(magicorndao.address)))
       .to.be.eq(0)
   })
 })

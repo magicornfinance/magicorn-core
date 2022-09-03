@@ -25,8 +25,8 @@ describe('DynamicFees', () => {
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
     gasLimit: 9999999
   })
-  const [dxdao, wallet, protocolFeeReceiver, other] = provider.getWallets()
-  const loadFixture = createFixtureLoader(provider, [dxdao, wallet, protocolFeeReceiver])
+  const [magicorndao, wallet, protocolFeeReceiver, other] = provider.getWallets()
+  const loadFixture = createFixtureLoader(provider, [magicorndao, wallet, protocolFeeReceiver])
 
   let factory: Contract
   let token0: Contract
