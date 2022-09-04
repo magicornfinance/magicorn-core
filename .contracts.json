@@ -1,56 +1,32 @@
 {
-  "rinkeby": {
-    "deployer": "0x1388B4C283F4443BD05C891D0D5F8Ad75A264693",
-    "factory": "0x1D354f628Bf088Cc28a59AEf4A47FBE14Aa9985B",
-    "feeReceiver": "0xA02411f12Ed2B31A53fe22D8d320A2dAe6051Dd1",
-    "feeSetter": "0x537210a7F926D09E4ef4b81a03f41819Db8D829f"
+  "bsc": {
+    "deployer": "0x6D72799b3b21e39F4fA72f3CC1D07810F7fBF049",
+    "factory": "0x247F7aC32893b32C4a0b45Fb064bc0D832d56437",
+    "feeReceiver": "0x315d52385f70BFd15099d893072BA1e354b74FA1",
+    "feeSetter": "0x4CBbdE7a4a92A4757D58775B36cC1A56f65AfBb5"
   },
   "mainnet": {
-    "deployer": "0xE0D1FE614f8Ef35D66F44fDf9fE1d5b69eF59Ef5",
-    "factory": "0xd34971BaB6E5E356fd250715F5dE0492BB070452",
-    "feeReceiver": "0xC6130400C1e3cD7b352Db75055dB9dD554E00Ef0",
-    "feeSetter": "0x288879b3CaFA044dB6Ba18ee638BBC1a233F8548"
+    "deployer": "",
+    "factory": "",
+    "feeReceiver": "",
+    "feeSetter": ""
   },
-  "arbitrumTestnetV3": {
-    "deployer": "0x4a6569148e34B2a4CBE5b4C232114b89Aa576717",
-    "factory": "0x2Fc759A22aFd8025940617Baf609F8C2a696315c",
-    "feeReceiver": "0x28219E330F19bCA7D53d2AE40CA5000Af575D445",
-    "feeSetter": "0x8d8FB6d95635513429355cd890A33426D0F7912d"
+  "polygon": {
+    "deployer": "",
+    "factory": "",
+    "feeReceiver": "",
+    "feeSetter": ""
   },
-  "sokol": {
-    "deployer": "0xee514cde999a30047D57c329f874F64b8A98FF46",
-    "factory": "0x30FB5b5a25D211B91B1d7FFb07d1a059452452aE",
-    "feeReceiver": "0x1afE40d8A67b92A1f95cAf646EcbBcF5Ce15048d",
-    "feeSetter": "0x80b10580F835a97d2ab536614354d1A5A8782bF8"
+  "avax": {
+    "deployer": "",
+    "factory": "",
+    "feeReceiver": "",
+    "feeSetter": ""
   },
-  "xdai": {
-    "deployer": "0x0000000000000000000000000000000000000000",
-    "factory": "0x5D48C95AdfFD4B40c1AAADc4e08fc44117E02179",
-    "feeReceiver": "0x65f29020d07A6CFa3B0bF63d749934d5A6E6ea18",
-    "feeSetter": "0xe3F8F55d7709770a18a30b7e0D16Ae203a2c034F"
-  },
-  "arbitrumOne": {
-    "deployer": "0x0000000000000000000000000000000000000000",
-    "factory": "0x359F20Ad0F42D75a5077e65F30274cABe6f4F01a",
-    "feeReceiver": "0x1D7C7cb66fB2d75123351FD0d6779E8d7724a1ae",
-    "feeSetter": "0x56F53CB6c0a80947C9Be239A62bc65fA20d4b41d"
-  },
-  "arbitrumRinkebyTestnet": {
-    "deployer": "0x0000000000000000000000000000000000000000",
-    "factory": "0x681c3836a5589b933062ACA4fd846c1287a2865F",
-    "feeReceiver": "0xB01988E0039230B52256BB4Db4496a6C79092B4f",
-    "feeSetter": "0x876BE4A79d154d4B2edE7c593B2E048756049B26"
-  },
-  "arbitrumGoerliTestnet": {
-    "deployer": "0x0000000000000000000000000000000000000000",
-    "factory": "0x64a0745EF9d3772d9739D9350873eD3703bE45eC",
-    "feeReceiver": "0xD3Fe5d463dD1fd943CCC2271F2ea980B898B5DA3",
-    "feeSetter": "0xD4AC4AaFb81eC774E49AA755A66EfCe4574D6276"
-  },
-  "goerli": {
-    "deployer": "0x0000000000000000000000000000000000000000",
-    "factory": "0xa3Dd335F8107527796642D044a5bD0A94De4E0E4",
-    "feeReceiver": "0x149B7DEC0f6Fd66Bbb09a35dF8D360165bdEc6Ee",
-    "feeSetter": "0x885B28d6B93087623483af5E5F7362BD6D8A0a6B"
+  "alien": {
+    "deployer": "",
+    "factory": "",
+    "feeReceiver": "",
+    "feeSetter": ""
   }
-}
+ }
